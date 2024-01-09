@@ -10,9 +10,9 @@ dotenv.config();
 
 
 cloudinary.config({ 
-  cloud_name: process.env.CLOUD_NAME, 
-  api_key: process.env.API_KEY, 
-  api_secret: process.env.API_SECRET
+  cloud_name: 'dhcsl4l6r', 
+  api_key: '985246249143863', 
+  api_secret: '9VedwhjYuHoNrro0-AGyfE-MVyg' 
 });
 
 const fileUplode = async (localFilePath) => {
