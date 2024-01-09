@@ -2,7 +2,7 @@ import { ApiErrors } from "../utils/ApiErrors.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/users.models.js";
-import { fileUplode } from "../utils/cloudnary.js";
+import { fileDelete, fileUplode } from "../utils/cloudnary.js";
 
 const generateAccessTokenAndRefreshToken = async function (userID) {
   try {
@@ -119,29 +119,57 @@ const logout = asyncHandler(async (req, res) => {
 });
 
 const updateUserDetails = asyncHandler(async (req, res) => {
-  const user = await User.findById(
-    req.user._id 
-  )
+  try {
+    const user = await User.findById(req.user._id);
 
-try{
-  
-    
-    user.email= req.body.email || user.email
-    user.fullName=  req.body.fullName || user.fullName
-    user.password= req.body.password || user.password
-    user.userName = req.body.userName  || user.userName
-    
-    
-    const nuser = await user.save()
-    
-  res.status(200).json(new ApiResponse(200,"User Successfully Updated", nuser));
-  
-} catch (error) {
-  console.log(error);
-}
+    if (!user) {
+      throw new ApiErrors(404, "", "unAuthorized User");
+    }
+    user.email = req.body.email || user.email;
+    user.fullName = req.body.fullName || user.fullName;
+    user.password = req.body.password || user.password;
+    user.userName = req.body.userName || user.userName;
 
-  
+    const nuser = await user.save();
 
+    res
+      .status(200)
+      .json(new ApiResponse(200, "User Successfully Updated", nuser));
+  } catch (error) {
+    console.log(error);
+  }
 });
 
-export { registerUser, loginUser, logout, updateUserDetails };
+const avatarUpdate = asyncHandler(async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      throw new ApiErrors(404, "", "unAuthorized User");
+    }
+
+    const { avatar } = req.files;
+    const avatarLocalPath = avatar?.[0]?.path;
+    if (!avatarLocalPath) {
+      throw new ApiErrors(400, "", ["avatar is required"]);
+    }
+const oldFile = user.avatar;
+
+    const avatarFile = await fileUplode(avatarLocalPath);
+
+    user.avatar = avatarFile.url;
+
+    const nuser = await user.save();
+    
+     await fileDelete(oldFile)
+
+   res.status(200).json(
+    new ApiResponse(200,"Avatar Successfully Updated",nuser)
+   )
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+export { registerUser, loginUser, logout, updateUserDetails, avatarUpdate };
+
