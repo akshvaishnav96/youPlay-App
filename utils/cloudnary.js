@@ -2,11 +2,17 @@ import { v2 as cloudinary } from "cloudinary";
 
 import fs from "fs";
 
-          
+import dotenv from "dotenv";
+dotenv.config();
+
+
+
+
+
 cloudinary.config({ 
-  cloud_name: 'dhcsl4l6r', 
-  api_key: '985246249143863', 
-  api_secret: '9VedwhjYuHoNrro0-AGyfE-MVyg' 
+  cloud_name: process.env.CLOUD_NAME, 
+  api_key: process.env.API_KEY, 
+  api_secret: process.env.API_SECRET
 });
 
 const fileUplode = async (localFilePath) => {
