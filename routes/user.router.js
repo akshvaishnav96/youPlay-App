@@ -3,9 +3,11 @@ import {
   avatarUpdate,
   coverImageUpdate,
   deleteCoverImage,
+  deleteUser,
   loginUser,
   logout,
   registerUser,
+  updatePassword,
   updateUserDetails,
 } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
@@ -37,8 +39,11 @@ router
     coverImageUpdate
   );
 
-  router.route("/delete-Cover-Image").patch(userAuth,deleteCoverImage)
-  
+router.route("/delete-Cover-Image").patch(userAuth, deleteCoverImage);
+router.route("/update-password").patch(userAuth, updatePassword);
+router.route("/delete-user").delete(userAuth, deleteUser);
+
+
 router.route("/logout").post(userAuth, logout);
 
 export { router };

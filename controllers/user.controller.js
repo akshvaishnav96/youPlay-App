@@ -69,18 +69,27 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 const loginUser = asyncHandler(async (req, res) => {
-  const { userLoginDetail, password } = req.body;
-  if (!userLoginDetail) {
+  const { userLoginDetails, password } = req.body;
+  if (!userLoginDetails) {
     throw new ApiErrors(404, "", ["Please enter username or email to login"]);
   }
 
   const existUser = await User.findOne({
-    $or: [{ email: userLoginDetail }, { userName: userLoginDetail }],
+    $or: [{ email: userLoginDetails }, { userName: userLoginDetails }],
   });
+
+  if (!existUser) {
+    res
+      .status(400)
+      .json(
+        new ApiErrors(400, "", ["user Not Exist please Enter Valid Details"])
+      );
+    return;
+  }
 
   const verifyUser = await existUser.isPasswordValid(password);
 
-  console.log(verifyUser);
+
   if (!verifyUser) {
     throw new ApiErrors(404, "", "user Details Not Matched");
   }
@@ -123,10 +132,14 @@ const logout = asyncHandler(async (req, res) => {
 const updateUserDetails = asyncHandler(async (req, res) => {
   try {
     const { user } = await userFind(req.user._id);
+    const { userName, email } = req.body;
+
+    const userAlreadyExist = await User.findOne({
+      $or: [{ email }, { userName }],
+    });
 
     user.email = req.body.email || user.email;
     user.fullName = req.body.fullName || user.fullName;
-    user.password = req.body.password || user.password;
     user.userName = req.body.userName || user.userName;
 
     const nuser = await user.save();
@@ -135,7 +148,7 @@ const updateUserDetails = asyncHandler(async (req, res) => {
       .status(200)
       .json(new ApiResponse(200, "User Successfully Updated", nuser));
   } catch (error) {
-    console.log(error);
+    res.status(400).json(new ApiErrors(400, "", [error]));
   }
 });
 
@@ -204,19 +217,107 @@ const coverImageUpdate = asyncHandler(async (req, res) => {
 });
 
 const deleteCoverImage = asyncHandler(async (req, res) => {
-try {
+  try {
     const { user } = await userFind(req.user._id);
     const oldFile = user.coverImage;
-     await fileDelete(oldFile);
-  
+    await fileDelete(oldFile);
+
     user.coverImage = undefined;
     const nuser = await user.save();
-    res.status(200).json(new ApiResponse(200,`cover Image successfully deleted `,nuser))
-} catch (error) {
-  res.status(400).json(new ApiErrors(402,"",[error]))
-}
- 
+    res
+      .status(200)
+      .json(new ApiResponse(200, `cover Image successfully deleted `, nuser));
+  } catch (error) {
+    res.status(400).json(new ApiErrors(402, "", [error]));
+  }
 });
+
+const updatePassword = asyncHandler(async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select(" -refreshToken");
+
+    if(!user){
+      res.status(400).json(new ApiErrors(400, "", "unAuthorized User"));
+   
+     }
+    const oldPassword = req.body?.oldPassword;
+    const newPassword = req.body?.newPassword;
+    if (!oldPassword) {
+      res
+        .status(400)
+        .json(
+          new ApiErrors(400, "old Password Is required", [
+            "old Password Is required",
+          ])
+        );
+      return;
+    }
+    const verifyOldPassword = await user.isPasswordValid(oldPassword);
+
+    if (!verifyOldPassword) {
+      res
+        .status(400)
+        .json(
+          new ApiErrors(400, "password Incorrect", [
+            "Old Password is incorrect",
+          ])
+        );
+      return;
+    }
+
+    if (!newPassword) {
+      res
+        .status(400)
+        .json(
+          new ApiErrors(400, "new Password Is required", [
+            "new Password Is required for updation",
+          ])
+        );
+      return;
+    }
+
+    user.password = newPassword;
+    await user.save();
+    res.status(200).json(new ApiResponse(200, "Password Successfully updated"));
+  } catch (error) {
+    res.status(400).json(new ApiErrors(400, "password Incorrect", [error]));
+  }
+});
+
+
+const deleteUser = asyncHandler(async(req,res)=>{
+
+
+try {
+
+  const user = await User.findById(req.user._id).select(" -refreshToken");
+const _id = user._id;
+  
+const avatarFile = user.avatar;
+  const coverFile = user.coverImage;
+
+  await fileDelete(avatarFile);
+
+if(coverFile){
+  await fileDelete(coverFile);
+}
+
+
+  await User.deleteOne({_id});
+
+   res.status(200).json(new ApiErrors(200, "", "user Successfully Deleted"));
+
+  
+
+  
+} catch (error) {
+  res.status(400).json(new ApiErrors(400,"",[error]))
+}
+
+
+
+
+})
 
 export {
   registerUser,
@@ -225,5 +326,7 @@ export {
   updateUserDetails,
   avatarUpdate,
   coverImageUpdate,
-  deleteCoverImage
+  deleteCoverImage,
+  updatePassword,
+  deleteUser
 };

@@ -1,18 +1,14 @@
 import { User } from "../models/users.models.js";
 
+const userFind = async (id) => {
+  const user = await User.findById(id).select("-password -refreshToken");
 
-const userFind   = async(id)=>{
+  if(!user){
+    res.status(400).json(new ApiErrors(400, "", "unAuthorized User"));
+ 
+   }
 
-    const user = await User.findById(id).select(
-        "-password -refreshToken"
-      );
-    
-      if (!user) {
-        throw new ApiErrors(400, "", "unAuthorized User");
-      }
+  return { user };
+};
 
-      return {user};
-}
-
-
-export {userFind}
+export { userFind };
