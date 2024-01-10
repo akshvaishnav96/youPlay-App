@@ -33,13 +33,20 @@ const fileUplode = async (localFilePath) => {
 
 const fileDelete  = async (oldFileCloudnaryUrl)=>{
  try {
-  const oldFileAameAevisionArray = oldFileCloudnaryUrl.split("/");
-  const fileId = oldFileAameAevisionArray[oldFileAameAevisionArray.length-1];
-  const indexof  =fileId.lastIndexOf(".")
-  const filenameWithoutExtension = fileId.slice(0, indexof);
 
-  const result  =  await cloudinary.uploader.destroy(filenameWithoutExtension)
-  console.log(result);
+  if(oldFileCloudnaryUrl){
+
+    const oldFileAameAevisionArray = oldFileCloudnaryUrl.split("/");
+    const fileIdWithExtension = oldFileAameAevisionArray[oldFileAameAevisionArray.length-1];
+    const indexOfLastDot = fileIdWithExtension.lastIndexOf(".");
+    const filenameWithoutExtension = fileIdWithExtension.slice(0, indexOfLastDot);
+  
+  
+  
+  
+  
+     await cloudinary.uploader.destroy(filenameWithoutExtension)
+  }
  } catch (error) {
   console.log(error);
  }
