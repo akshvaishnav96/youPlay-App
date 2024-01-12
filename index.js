@@ -29,8 +29,10 @@ app.use(express.static("public"))
 app.use(cookieParser())
 
 import {router} from "./routes/user.router.js"
+import { videoRouter } from "./routes/videos.router.js";
 
 app.use("/api/v1/users",router)
+app.use("/api/v1/videos",videoRouter)
 
 dbConnect().then(()=>{
 
