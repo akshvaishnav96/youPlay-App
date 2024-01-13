@@ -4,6 +4,9 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/users.models.js";
 import { fileDelete, fileUplode } from "../utils/cloudnary.js";
 import { userFind } from "../utils/userFindFromReq.js";
+import mongoose from "mongoose";
+import { Video } from "../models/video.models.js";
+import jwt from "jsonwebtoken";
 
 const generateAccessTokenAndRefreshToken = async function (userID) {
   try {
@@ -69,6 +72,29 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 const loginUser = asyncHandler(async (req, res) => {
+  const alreadyAccessToken = await req.cookies.accessToken;
+  if (alreadyAccessToken) {
+    const jwtverify = jwt.verify(
+      alreadyAccessToken,
+      process.env.ACCESS_TOKEN_KEY
+    );
+    const _id = jwtverify.id;
+    const authorizedUser = await User.findById({ _id }).select("-password");
+
+    if (authorizedUser) {
+      res
+        .status(200)
+        .json(
+          new ApiResponse(
+            200,
+            "already logged in Logout First to login again",
+            authorizedUser
+          )
+        );
+      return;
+    }
+  }
+
   const { userLoginDetails, password } = req.body;
   if (!userLoginDetails) {
     throw new ApiErrors(404, "", ["Please enter username or email to login"]);
@@ -87,8 +113,13 @@ const loginUser = asyncHandler(async (req, res) => {
     return;
   }
 
+  if (!password) {
+    res
+      .status(400)
+      .json(new ApiErrors(400, "", ["please Enter Valid Details : password"]));
+    return;
+  }
   const verifyUser = await existUser.isPasswordValid(password);
-
 
   if (!verifyUser) {
     throw new ApiErrors(404, "", "user Details Not Matched");
@@ -236,10 +267,9 @@ const updatePassword = asyncHandler(async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select(" -refreshToken");
 
-    if(!user){
+    if (!user) {
       res.status(400).json(new ApiErrors(400, "", "unAuthorized User"));
-   
-     }
+    }
     const oldPassword = req.body?.oldPassword;
     const newPassword = req.body?.newPassword;
     if (!oldPassword) {
@@ -284,40 +314,179 @@ const updatePassword = asyncHandler(async (req, res) => {
   }
 });
 
+const deleteUser = asyncHandler(async (req, res) => {
 
-const deleteUser = asyncHandler(async(req,res)=>{
+  try {
+    const data = await User.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(req.user._id),
+        },
+      },{
+        $lookup: {
+          from: "videos",
+          localField: "_id",
+          foreignField: "owner",
+          as: "uploded_videos",
+        },
+      },
+      {
+        $addFields: {
+          totalUplodedVideoCount: {
+            $size: "$uploded_videos",
+          },
+        },
+      },
+      {
+        $project: {
+          password: 0,
+          createdAt: 0,
+          updatedAt: 0,
+          refreshToken: 0,
+          uploded_videos: {
+            createdAt: 0,
+            updatedAt: 0,
+          },
+        },
+      },
+    ]);
 
 
-try {
+    const deletedata = await Promise.all(
+      data[0].uploded_videos.map(({ videoFile, thumbnail, _id }) => {
+        return Promise.all([
+          fileDelete(videoFile, "video"),
+          fileDelete(thumbnail),
+          Video.deleteMany({ _id: new mongoose.Types.ObjectId(_id) }),
+        ]);
+      })
+    );
 
-  const user = await User.findById(req.user._id).select(" -refreshToken");
-const _id = user._id;
-  
-const avatarFile = user.avatar;
-  const coverFile = user.coverImage;
+    const avatarFile = data[0].avatar;
+    const coverFile = data[0].coverImage;
 
-  await fileDelete(avatarFile);
+    if (avatarFile) {
+      await fileDelete(avatarFile);
+    }
 
-if(coverFile){
-  await fileDelete(coverFile);
-}
+    if (coverFile) {
+      await fileDelete(coverFile);
+    }
 
+    if (deletedata.some((result) => !result.every(Boolean))) {
+      res
+        .status(400)
+        .json(new ApiErrors(400, "", ["Video data not successfully deleted"]));
+      return;
+    }
 
-  await User.deleteOne({_id});
+    await User.deleteOne({ _id: data[0]._id });
 
-   res.status(200).json(new ApiErrors(200, "", "user Successfully Deleted"));
+    res
+      .status(200)
+      .json(new ApiResponse(200, "success", "User Successfully Deleted"));
+  } catch (error) {
+    res.status(400).json(new ApiErrors(400, "", [error.message]));
+  }
+});
 
-  
+const getSubscriberAndChannel = asyncHandler(async (req, res) => {
+  try {
+    const data = await User.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(req.user._id),
+        },
+      },
+      {
+        $lookup: {
+          from: "subscriptions",
+          localField: "_id",
+          foreignField: "subscriber",
+          as: "Channal_Subscribed",
+        },
+      },
+      {
+        $lookup: {
+          from: "subscriptions",
+          localField: "_id",
+          foreignField: "channel",
+          as: "our_Channel_Subscribers",
+        },
+      },
+      {
+        $addFields: {
+          channal_Subscribed_Count: {
+            $size: "$Channal_Subscribed",
+          },
+          our_Channel_Subscribers_Count: {
+            $size: "$our_Channel_Subscribers",
+          },
+        },
+      },
+      {
+        $project: {
+          password: 0,
+          createdAt: 0,
+          updatedAt: 0,
+          refreshToken: 0,
+          Channal_Subscribed: 0,
+          our_Channel_Subscribers: 0,
+        },
+      },
+    ]);
 
-  
-} catch (error) {
-  res.status(400).json(new ApiErrors(400,"",[error]))
-}
+    res
+      .status(200)
+      .json(new ApiResponse(200, "Successfully get data", data[0]));
+  } catch (error) {
+    res.status(400).json(new ApiErrors(400, "", [error]));
+  }
+});
 
-
-
-
-})
+const getAllUplodedVideosDetails = asyncHandler(async (req, res) => {
+  try {
+    const data = await User.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(req.user._id),
+        },
+      },
+      {
+        $lookup: {
+          from: "videos",
+          localField: "_id",
+          foreignField: "owner",
+          as: "uploded_videos",
+        },
+      },
+      {
+        $addFields: {
+          totalUplodedVideoCount: {
+            $size: "$uploded_videos",
+          },
+        },
+      },
+      {
+        $project: {
+          password: 0,
+          createdAt: 0,
+          updatedAt: 0,
+          refreshToken: 0,
+          uploded_videos: {
+            createdAt: 0,
+            updatedAt: 0,
+          },
+        },
+      },
+    ]);
+    res
+      .status(200)
+      .json(new ApiResponse(200, "Successfully get videos data", data[0]));
+  } catch (error) {
+    res.status(400).json(new ApiErrors(400, "", [error]));
+  }
+});
 
 export {
   registerUser,
@@ -328,5 +497,7 @@ export {
   coverImageUpdate,
   deleteCoverImage,
   updatePassword,
-  deleteUser
+  deleteUser,
+  getSubscriberAndChannel,
+  getAllUplodedVideosDetails,
 };

@@ -26,23 +26,30 @@ const fileUplode = async (localFilePath) => {
   }
 };
 
-const fileDelete = async (oldFileCloudnaryUrl) => {
+const fileDelete = async (oldFileCloudnaryUrl,type) => {
   try {
     if (oldFileCloudnaryUrl) {
-      const oldFileAameAevisionArray = oldFileCloudnaryUrl.split("/");
-      const fileIdWithExtension =
-        oldFileAameAevisionArray[oldFileAameAevisionArray.length - 1];
-      const indexOfLastDot = fileIdWithExtension.lastIndexOf(".");
-      const filenameWithoutExtension = fileIdWithExtension.slice(
-        0,
-        indexOfLastDot
-      );
+      // const oldFileAameAevisionArray = oldFileCloudnaryUrl.split("/");
+      // const fileIdWithExtension =
+      //   oldFileAameAevisionArray[oldFileAameAevisionArray.length - 1];
+      // const indexOfLastDot = fileIdWithExtension.lastIndexOf(".");
+      // const filenameWithoutExtension = fileIdWithExtension.slice(
+      //   0,
+      //   indexOfLastDot
+      // );
 
-      await cloudinary.uploader.destroy(filenameWithoutExtension);
+      const fileCodewithExtension = oldFileCloudnaryUrl.split("/");
+      const fileCode =
+        fileCodewithExtension[fileCodewithExtension.length - 1].split(".")[0];
+      const deleteData = await cloudinary.uploader.destroy(fileCode,{resource_type:type});
+      return { result: "ok", deleteData };
     }
   } catch (error) {
     console.log(error);
   }
 };
+
+
+
 
 export { fileUplode, fileDelete };
