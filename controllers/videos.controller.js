@@ -174,94 +174,6 @@ const deleteVideo = asyncHandler(async (req, res) => {
   }
 });
 
-// const getLikes = asyncHandler(async (req, res) => {
-//   try {
-//     const videoId = req.params.videoId;
-//     const commentData = await Video.aggregate([
-//       {
-//         $match: {
-//           _id: new mongoose.Types.ObjectId(videoId),
-//         },
-//       },
-//       {
-//         $lookup: {
-//           from: "likes",
-//           localField: "_id",
-//           foreignField: "video",
-//           as: "liked_Video",
-//           pipeline: [
-//             {
-//               $lookup: {
-//                 from: "users",
-//                 localField: "likedBy",
-//                 foreignField: "_id",
-//                 as: "likedBy",
-//               },
-//             },
-//             {
-//               $lookup: {
-//                 from: "comments",
-//                 localField: "comment",
-//                 foreignField: "_id",
-//                 as: "comment_detail",
-//               },
-//             },
-//             {
-//               $addFields: {
-//                 comment_detail: {
-//                   $first: "$comment_detail",
-//                 },
-//                 liked_by: {
-//                   $first: "$likedBy",
-//                 },
-//                 totalLikes: {
-//                   $size: "$likedBy",
-//                 },
-//               },
-//             },
-//           ],
-//         },
-//       },
-//       {
-//         $addFields: {
-//           liked_Video: {
-//             $first: "$liked_Video",
-//           },
-//         },
-//       },
-//       {
-//         $project: {
-//           createdAt: 0,
-//           updatedAt: 0,
-//           liked_Video: {
-//             _id: 0,
-//             video: 0,
-//             comment: 0,
-//             likedBy: 0,
-//             liked_By: 0,
-//             comment_detail: {
-//               video: 0,
-//               owner: 0,
-//             },
-//             liked_by: {
-//               email: 0,
-//               fullName: 0,
-//               coverImage: 0,
-//               password: 0,
-//               createdAt: 0,
-//               updatedAt: 0,
-//               refreshToken: 0,
-//             },
-//           },
-//         },
-//       },
-//     ]);
-
-//    res.status(200).json(new ApiResponse(200,"success",commentData[0]));
-//   } catch (error) {
-//     res.status(400).json(new ApiErrors(400,"",[error]))
-//   }
-// });
 
 const getLikes = asyncHandler(async (req, res) => {
   try {
@@ -401,12 +313,12 @@ const getLikes = asyncHandler(async (req, res) => {
       },
     ]);
 
-    // console.log(likesData[0].liked_video);
-
-    // console.log(likesData[0]);
+  
 
     res.status(200).json(new ApiResponse(200, "success", likesData[0]));
-  } catch (error) {}
+  } catch (error) {
+    res.status(400).json(new ApiErrors(400,"",[error]))
+  }
 });
 
 export { addVideo, getVideoDetails, updateVideoDetails, deleteVideo, getLikes };
