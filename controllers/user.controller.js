@@ -315,14 +315,14 @@ const updatePassword = asyncHandler(async (req, res) => {
 });
 
 const deleteUser = asyncHandler(async (req, res) => {
-
   try {
     const data = await User.aggregate([
       {
         $match: {
           _id: new mongoose.Types.ObjectId(req.user._id),
         },
-      },{
+      },
+      {
         $lookup: {
           from: "videos",
           localField: "_id",
@@ -350,7 +350,6 @@ const deleteUser = asyncHandler(async (req, res) => {
         },
       },
     ]);
-
 
     const deletedata = await Promise.all(
       data[0].uploded_videos.map(({ videoFile, thumbnail, _id }) => {
@@ -395,7 +394,7 @@ const getSubscriberAndChannel = asyncHandler(async (req, res) => {
     const data = await User.aggregate([
       {
         $match: {
-          _id: new mongoose.Types.ObjectId(req.user._id),
+          _id: new mongoose.Types.ObjectId(req.params.id || req.user._id),
         },
       },
       {
@@ -416,7 +415,7 @@ const getSubscriberAndChannel = asyncHandler(async (req, res) => {
       },
       {
         $addFields: {
-          channal_Subscribed_Count: {
+          other_Channal_Subscribed_Count: {
             $size: "$Channal_Subscribed",
           },
           our_Channel_Subscribers_Count: {

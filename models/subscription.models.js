@@ -1,6 +1,7 @@
-import mongoose,{Schema} from mongoose
+import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2"
+import mongoose,{Schema} from "mongoose"
 
-const SubscriptionSchema = new Schema({
+const subscriptionSchema = new Schema({
 
     subscriber:{
         type:mongoose.Schema.Types.ObjectId,
@@ -13,4 +14,7 @@ const SubscriptionSchema = new Schema({
     }
 })
 
-export const Subscription = mongoose.model("Subscription",SubscriptionSchema)
+subscriptionSchema.plugin(mongooseAggregatePaginate)
+
+
+export const Subscription = mongoose.model("Subscription",subscriptionSchema)

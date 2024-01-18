@@ -44,7 +44,7 @@ router
 router.route("/delete-Cover-Image").patch(userAuth, deleteCoverImage);
 router.route("/update-password").patch(userAuth, updatePassword);
 router.route("/delete-user").delete(userAuth, deleteUser);
-router.route("/get-subscription").get(userAuth, getSubscriberAndChannel);
+router.route("/get-subscription/:id?").get(userAuth, getSubscriberAndChannel);
 router.route("/get-uploded-videos").get(userAuth, getAllUplodedVideosDetails);
 
 
