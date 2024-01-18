@@ -4,7 +4,6 @@ import { Video } from "../models/video.models.js";
 import { fileDelete, fileUplode } from "../utils/cloudnary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import mongoose from "mongoose";
-import { User } from "../models/users.models.js";
 
 const addVideo = asyncHandler(async (req, res) => {
   try {
