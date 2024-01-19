@@ -4,6 +4,7 @@ import { Video } from "../models/video.models.js";
 import { fileDelete, fileUplode } from "../utils/cloudnary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import mongoose from "mongoose";
+import { Likes } from "../models/likes.models.js";
 
 const addVideo = asyncHandler(async (req, res) => {
   try {
@@ -173,7 +174,6 @@ const deleteVideo = asyncHandler(async (req, res) => {
   }
 });
 
-
 const getLikes = asyncHandler(async (req, res) => {
   try {
     const videoId = req.params.videoId;
@@ -199,7 +199,7 @@ const getLikes = asyncHandler(async (req, res) => {
                 as: "likedByUser",
               },
             },
-           
+
             {
               $addFields: {
                 likedByUser: {
@@ -207,7 +207,6 @@ const getLikes = asyncHandler(async (req, res) => {
                 },
               },
             },
-           
           ],
         },
       },
@@ -234,31 +233,33 @@ const getLikes = asyncHandler(async (req, res) => {
               },
             },
             {
-              $project:{
-                video:0,
-                _id:0,
-               owner:0,
+              $project: {
+                video: 0,
+                _id: 0,
+                owner: 0,
                 comment_by_user: {
-             _id:0,
-                  fullName:0,
-                  coverImage:0,
-                  email:0,
-                  password:0,
+                  _id: 0,
+                  fullName: 0,
+                  coverImage: 0,
+                  email: 0,
+                  password: 0,
                   createdAt: 0,
                   updatedAt: 0,
-                  refreshToken:0,
-                  watchHistory:0
-}              }
-            }
+                  refreshToken: 0,
+                  watchHistory: 0,
+                },
+              },
+            },
           ],
         },
-      },{
-        $lookup:{
-          from  : "users",
-          localField:"owner",
-          foreignField:"_id",
-          as:"video_owner_name"
-        }
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "owner",
+          foreignField: "_id",
+          as: "video_owner_name",
+        },
       },
 
       {
@@ -269,16 +270,15 @@ const getLikes = asyncHandler(async (req, res) => {
           totalComments: {
             $size: "$comment_details",
           },
-          video_owner_name:{
-            $first:"$video_owner_name"
-          }
+          video_owner_name: {
+            $first: "$video_owner_name",
+          },
         },
       },
       {
         $project: {
-
-          _id:0,
-          owner:0,
+          _id: 0,
+          owner: 0,
           createdAt: 0,
           updatedAt: 0,
           liked_video: {
@@ -286,38 +286,69 @@ const getLikes = asyncHandler(async (req, res) => {
             comment: 0,
             video: 0,
             likedBy: 0,
-            likedByUser:{
-              fullName:0,
-              coverImage:0,
-              email:0,
-              password:0,
+            likedByUser: {
+              fullName: 0,
+              coverImage: 0,
+              email: 0,
+              password: 0,
               createdAt: 0,
               updatedAt: 0,
-              refreshToken:0,
-              watchHistory:0
-            }
+              refreshToken: 0,
+              watchHistory: 0,
+            },
           },
-          video_owner_name:{
-            _id:0,
-            avatar:0,
-              coverImage:0,
-              email:0,
-              password:0,
-              createdAt: 0,
-              updatedAt: 0,
-              refreshToken:0,
-              watchHistory:0
-          }
+          video_owner_name: {
+            _id: 0,
+            avatar: 0,
+            coverImage: 0,
+            email: 0,
+            password: 0,
+            createdAt: 0,
+            updatedAt: 0,
+            refreshToken: 0,
+            watchHistory: 0,
+          },
         },
       },
     ]);
 
-  
-
     res.status(200).json(new ApiResponse(200, "success", likesData[0]));
   } catch (error) {
-    res.status(400).json(new ApiErrors(400,"",[error]))
+    res.status(400).json(new ApiErrors(400, "", [error]));
   }
 });
 
-export { addVideo, getVideoDetails, updateVideoDetails, deleteVideo, getLikes };
+const getCommentLikes = asyncHandler(async (req, res) => {
+  console.log(req.params.videoId);
+
+  const commentOnVideoData = await Likes.aggregate([
+    { 
+      $match: {
+        
+      } 
+  },
+    {
+      $lookup: {
+        from: "comments",
+        localField: "comment",
+        foreignField: "_id",
+        as: "comment_data",
+      },
+    },
+  ]);
+
+  console.log(commentOnVideoData[0]);
+});
+
+
+
+
+export {
+  addVideo,
+  getVideoDetails,
+  updateVideoDetails,
+  deleteVideo,
+  getLikes,
+  getCommentLikes,
+
+};

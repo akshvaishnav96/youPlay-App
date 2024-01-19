@@ -1,4 +1,5 @@
 import mongoose,{Schema} from "mongoose";
+import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 
 const tweetsSchema = new Schema({
 
@@ -13,5 +14,7 @@ const tweetsSchema = new Schema({
     }
 
 })
+
+tweetsSchema.plugin(mongooseAggregatePaginate)
 
 export const Tweet = mongoose.model("Tweet",tweetsSchema);

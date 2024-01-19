@@ -30,9 +30,11 @@ app.use(cookieParser())
 
 import {router} from "./routes/user.router.js"
 import { videoRouter } from "./routes/videos.router.js";
+import { tweetRouter } from "./routes/tweets.router.js";
 
 app.use("/api/v1/users",router)
 app.use("/api/v1/videos",videoRouter)
+app.use("/api/v1/tweets",tweetRouter)
 
 dbConnect().then(()=>{
 
