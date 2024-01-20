@@ -35,7 +35,7 @@ const addVideosToPlaylist = asyncHandler(async (req, res) => {
 const videoId = req.params.videoId;
 const playlistName = req.params.playlistName;
 
-const data = Playlist.
+
 
 
 
