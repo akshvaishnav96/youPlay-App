@@ -9,12 +9,12 @@ const playlistSchema = new Schema({
       }
     ],
       playlistName:{
-        type:Schema,
+        type:String,
         required:true,
         trim:true,
       },
       description:{
-        type:Schema,
+        type:String,
         required:true,
         trim:true
       },
