@@ -2,10 +2,12 @@ import mongoose,{Schema} from "mongoose";
 
 
 const playlistSchema = new Schema({
-    video: {
+    video: [
+      {
         type: Schema.Types.ObjectId,
         ref: "Video",
-      },
+      }
+    ],
       playlistName:{
         type:Schema,
         required:true,
@@ -21,5 +23,7 @@ const playlistSchema = new Schema({
         ref: "User",
       }
 })
+
+
 
 export const Playlist = mongoose.model("Playlist",playlistSchema)
