@@ -86,8 +86,7 @@ const deleteVideosFromPlaylist = asyncHandler(async (req, res) => {
     if (playlistData?.video?.includes(videoId)) {
       const videoIndex = playlistData.video.indexOf(videoId);
 
-      const x = playlistData.video.splice(videoIndex, 1);
-      
+      playlistData.video.splice(videoIndex, 1);
     }
 
     const data = await playlistData.save();
@@ -98,4 +97,9 @@ const deleteVideosFromPlaylist = asyncHandler(async (req, res) => {
   }
 });
 
-export { addPlaylist, addVideosToPlaylist, getPlaylists,deleteVideosFromPlaylist };
+export {
+  addPlaylist,
+  addVideosToPlaylist,
+  getPlaylists,
+  deleteVideosFromPlaylist,
+};

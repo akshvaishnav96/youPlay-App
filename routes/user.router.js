@@ -4,8 +4,11 @@ import {
   coverImageUpdate,
   deleteCoverImage,
   deleteUser,
+  deleteWatchList,
+  deletesingleVideoFromWatchlist,
   getAllUplodedVideosDetails,
   getSubscriberAndChannel,
+  getWatchList,
   loginUser,
   logout,
   registerUser,
@@ -46,9 +49,9 @@ router.route("/update-password").patch(userAuth, updatePassword);
 router.route("/delete-user").delete(userAuth, deleteUser);
 router.route("/get-subscription/:id?").get(userAuth, getSubscriberAndChannel);
 router.route("/get-uploded-videos").get(userAuth, getAllUplodedVideosDetails);
-
-
-
+router.route("/watchlist").get(userAuth,getWatchList);
+router.route("/watchlist/:videoId").delete(userAuth,deletesingleVideoFromWatchlist);
+router.route("/watchlist").delete(userAuth,deleteWatchList);
 router.route("/logout").post(userAuth, logout);
 
 export { router };

@@ -487,6 +487,117 @@ const getAllUplodedVideosDetails = asyncHandler(async (req, res) => {
   }
 });
 
+const getWatchList = asyncHandler(async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const data = await User.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(userId),
+        },
+      },
+      {
+        $lookup: {
+          from: "videos",
+          localField: "watchHistory",
+          foreignField: "_id",
+          as: "watchHistory",
+          pipeline: [
+            {
+              $lookup: {
+                from: "users",
+                localField: "owner",
+                foreignField: "_id",
+                as: "owner",
+              },
+            },
+            {
+              $addFields: {
+                owner: {
+                  $first: "$owner",
+                },
+              },
+            },
+          ],
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          userName: 0,
+          avatar: 0,
+          email: 0,
+          fullName: 0,
+          coverImage: 0,
+          password: 0,
+          createdAt: 0,
+          updatedAt: 0,
+          __v: 0,
+          refreshToken: 0,
+          watchHistory: {
+            createdAt: 0,
+            updatedAt: 0,
+            __v: 0,
+            owner: {
+              _id: 0,
+              email: 0,
+              fullName: 0,
+              coverImage: 0,
+              password: 0,
+              createdAt: 0,
+              updatedAt: 0,
+              __v: 0,
+              refreshToken: 0,
+              watchHistory: 0,
+            },
+          },
+        },
+      },
+    ]);
+
+    res.status(200).json(new ApiResponse(200, "success", data[0]));
+  } catch (error) {
+    res.status(400).json(new ApiErrors(400, "", [error]));
+  }
+});
+
+const deletesingleVideoFromWatchlist = asyncHandler(async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const videoId = req.params.videoId;
+
+    if(!videoId){
+      throw new Error("video id not available");
+    }
+
+    const data = await User.findById({ _id: userId }).select(" -password  -refreshToken");
+
+    const videoIndex = await data.watchHistory.indexOf(videoId);
+
+    await data.watchHistory.splice(videoIndex, 1);
+
+    await data.save();
+
+    res.status(200).json(new ApiResponse(200, "success", data));
+  } catch (error) {
+    res.status(400).json(new ApiErrors(400, "", [error]));
+  }
+});
+
+
+const deleteWatchList = asyncHandler(async(req,res)=>{
+ try {
+   const userId = req.user._id;
+   const data = await User.findById({ _id: userId }).select(" -password  -refreshToken");
+   data.watchHistory =  undefined;
+  const newUserData = await data.save();
+   res.status(200).json(new ApiResponse(200,"success",newUserData))
+ } catch (error) {
+  res.status(400).json(new ApiResponse(400,"",[error]))
+ }
+})
+
 export {
   registerUser,
   loginUser,
@@ -499,4 +610,7 @@ export {
   deleteUser,
   getSubscriberAndChannel,
   getAllUplodedVideosDetails,
+  getWatchList,
+  deletesingleVideoFromWatchlist,
+  deleteWatchList
 };

@@ -5,6 +5,7 @@ import { fileDelete, fileUplode } from "../utils/cloudnary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import mongoose from "mongoose";
 import { Likes } from "../models/likes.models.js";
+import { User } from "../models/users.models.js";
 
 const addVideo = asyncHandler(async (req, res) => {
   try {
@@ -110,7 +111,9 @@ const getVideoDetails = asyncHandler(async (req, res) => {
       },
     ]);
 
-    console.log(data[0]);
+    const user = await User.findById({ _id: req.user._id });
+    await user.watchHistory.push(videoId);
+    await user.save();
 
     res
       .status(200)
@@ -322,11 +325,9 @@ const getCommentLikes = asyncHandler(async (req, res) => {
   console.log(req.params.videoId);
 
   const commentOnVideoData = await Likes.aggregate([
-    { 
-      $match: {
-        
-      } 
-  },
+    {
+      $match: {},
+    },
     {
       $lookup: {
         from: "comments",
@@ -340,9 +341,6 @@ const getCommentLikes = asyncHandler(async (req, res) => {
   console.log(commentOnVideoData[0]);
 });
 
-
-
-
 export {
   addVideo,
   getVideoDetails,
@@ -350,5 +348,4 @@ export {
   deleteVideo,
   getLikes,
   getCommentLikes,
-
 };
