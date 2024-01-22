@@ -321,6 +321,26 @@ const getLikes = asyncHandler(async (req, res) => {
   }
 });
 
+const addLikes = asyncHandler(async(req,res)=>{
+  try {
+    
+    const userId = req.user._id
+    const videoId = req.params.videoId
+
+    const data = await Likes.create({
+video:videoId,
+likedBy:userId
+    })
+
+    res.status(201).json(new ApiResponse(201,"successfully added",data))
+
+
+  } catch (error) {
+    res.status(400).json(new ApiErrors(400,"",[error]))
+    
+  }
+})
+
 const getCommentLikes = asyncHandler(async (req, res) => {
   console.log(req.params.videoId);
 
@@ -347,5 +367,6 @@ export {
   updateVideoDetails,
   deleteVideo,
   getLikes,
+  addLikes,
   getCommentLikes,
 };
