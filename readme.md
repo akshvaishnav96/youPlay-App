@@ -17,12 +17,12 @@ functionality :
 
 
         user Roughts _________________________________________________
-        
-            Note: prefix : api/v1/users
 
-            A: /register                (post)  
+            Note: prefix : /api/v1/users
 
-                fields: 
+            A: /register                (post)
+
+                fields:
                     userName    :   required
                     email       :   required
                     fullName    :   required
@@ -30,9 +30,9 @@ functionality :
                     coverImage  :       -
                     password    :   required
 
-            B: /Login                   (post)   
+            B: /Login                   (post)
 
-                fields: 
+                fields:
                     userLoginDetails    :   required (userName or email)
                     password            :   required
 
@@ -46,7 +46,7 @@ functionality :
 
             D: /avatar-update           (patch)
 
-                fields: 
+                fields:
                     avatar              :       required
 
             E: /cover-update            (patch)
@@ -71,33 +71,95 @@ functionality :
             H: /delete-user             (delete)
 
                 fields:
-                        ################################
+                    ################################
 
 
             I: /get-subscription/:id?   (get)
 
                 fields:
-                        ################################
+                    ################################
 
 
             J: /get-uploded-videos      (get)
 
                 fields:
-                        ################################
+                    ################################
 
             K: /watchlist               (get)
 
                 fields:
-                        ################################
+                    ################################
             L: /watchlist/:videoId      (delete)
 
                 fields:
-                        ################################
+                    ################################
 
 
             M: /watchlist               (delete)
 
                 fields:
-                        ################################
+                    ################################
 
             N: /logout                  (post)
+
+                fields:
+                    ################################
+
+
+
+    📹(video) :
+        videoSchema:
+            videoFile
+            thumbnail
+            title
+            description
+            duration
+            views
+            isPublished
+            owner
+
+        video Roughts:____________________________________________
+
+            Note: prefix : /api/v1/videos
+
+            A: /                                (post)
+
+                fields:
+                    video               :       required
+                    thumbnail           :       required
+                    title               :       required
+                    description         :       required
+
+            B: /likes/:videoId                  (get)
+
+                fields:
+                    ################################
+
+
+            C: /:videoId                        (get)
+
+                fields:
+                    ################################
+
+            D: /:videoId                        (delete)
+
+                fields:
+                    ################################
+
+
+            E: /update-video-details/:videoId   (patch)
+
+                fields:
+
+                    thumbanail
+                    title
+                    description                 (required only field want to update)
+
+
+            F: /getcomments/:videoId            (get)
+
+                fields:
+                    ################################
+
+
+
