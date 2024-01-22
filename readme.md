@@ -2,6 +2,19 @@ you play application
 
 : it is a video streaming app
 
+used dependences:
+
+    bcrypt
+    cloudinary
+    cookie-parser
+    cors
+    dotenv
+    express
+    jsonwebtoken
+    mongoose
+    mongoose-aggregate-paginate-v2
+    multer
+
 functionality :
 
     🦸(user) :
@@ -23,18 +36,18 @@ functionality :
             A: /register                (post)
 
                 fields:
-                    userName    :   required
-                    email       :   required
-                    fullName    :   required
-                    avatar      :   required
+                    userName    :   REQUIRED
+                    email       :   REQUIRED
+                    fullName    :   REQUIRED
+                    avatar      :   REQUIRED
                     coverImage  :       -
-                    password    :   required
+                    password    :   REQUIRED
 
             B: /Login                   (post)
 
                 fields:
-                    userLoginDetails    :   required (userName or email)
-                    password            :   required
+                    userLoginDetails    :   REQUIRED (userName or email)
+                    password            :   REQUIRED
 
 
             C: /user-update             (patch)
@@ -47,12 +60,12 @@ functionality :
             D: /avatar-update           (patch)
 
                 fields:
-                    avatar              :       required
+                    avatar              :       REQUIRED
 
             E: /cover-update            (patch)
 
                 fields:
-                    coverImage          :       required
+                    coverImage          :       REQUIRED
 
 
             F: /delete-Cover-Image      (patch)
@@ -64,8 +77,8 @@ functionality :
             G: /update-password         (patch)
 
                 fields:
-                    oldPassword         :   required
-                    newPassword         :   required
+                    oldPassword         :   REQUIRED
+                    newPassword         :   REQUIRED
 
 
             H: /delete-user             (delete)
@@ -125,10 +138,10 @@ functionality :
             A: /                                (post)
 
                 fields:
-                    video               :       required
-                    thumbnail           :       required
-                    title               :       required
-                    description         :       required
+                    video               :       REQUIRED
+                    thumbnail           :       REQUIRED
+                    title               :       REQUIRED
+                    description         :       REQUIRED
 
             B: /likes/:videoId                  (get)
 
@@ -153,7 +166,7 @@ functionality :
 
                     thumbanail
                     title
-                    description                 (required only field want to update)
+                    description                 (REQUIRED only field want to update)
 
 
             F: /getcomments/:videoId            (get)
@@ -161,5 +174,79 @@ functionality :
                 fields:
                     ################################
 
+    tweet:
+        tweetsSchema:
+            owner
+            content
+
+        tweet Roughts:______________________________________________
+
+            Note: prefix : /api/v1/tweets
+
+            A: /                                (post)
+
+                fields:
+                    tweet
 
 
+            B: /                                (get)
+
+                fields:
+                    ################################
+
+
+            C: /:tweetId                        (delete)
+
+                fields:
+                    ################################
+
+
+
+    playlist:
+        playlistSchema:
+            video
+            playlistName
+            description
+            owner
+
+        playlist Roughts:____________________________________________________
+
+            A: /                                (post)
+
+                fields:
+                    playlistName        :       REQUIRED
+                    description         :       REQUIRED
+
+
+            B: /                                (get)
+
+                fields:
+                    ################################
+
+
+            C: /:playlistId/:videoId?           (post)
+
+                fields:
+                    ################################
+
+            D: /:playlistId/:videoId?           (delete)
+
+                fields:
+                    ################################
+
+    subscriber's:
+        subscriptionSchema:
+            subscriber
+            channel
+
+    likes:
+        likesSchema:
+            video
+            comment
+            likedby
+
+    comments:
+        commentsSchema:
+            video
+            content
+            owner
