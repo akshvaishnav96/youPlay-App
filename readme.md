@@ -148,19 +148,23 @@ functionality :
                 fields:
                     ################################
 
-
-            C: /:videoId                        (get)
-
-                fields:
-                    ################################
-
-            D: /:videoId                        (delete)
+            C: /likes/:videoId                  (post)
 
                 fields:
                     ################################
 
+            D: /:videoId                        (get)
 
-            E: /update-video-details/:videoId   (patch)
+                fields:
+                    ################################
+
+            E: /:videoId                        (delete)
+
+                fields:
+                    ################################
+
+
+            F: /update-video-details/:videoId   (patch)
 
                 fields:
 
@@ -169,7 +173,7 @@ functionality :
                     description                 (REQUIRED only field want to update)
 
 
-            F: /getcomments/:videoId            (get)
+            G: /getcomments/:videoId            (get)
 
                 fields:
                     ################################
