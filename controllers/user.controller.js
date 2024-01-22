@@ -163,11 +163,13 @@ const logout = asyncHandler(async (req, res) => {
 const updateUserDetails = asyncHandler(async (req, res) => {
   try {
     const { user } = await userFind(req.user._id);
-    const { userName, email } = req.body;
 
+    const { userName, email } = req.body;
     const userAlreadyExist = await User.findOne({
       $or: [{ email }, { userName }],
     });
+
+    
 
     user.email = req.body.email || user.email;
     user.fullName = req.body.fullName || user.fullName;
@@ -567,11 +569,13 @@ const deletesingleVideoFromWatchlist = asyncHandler(async (req, res) => {
     const userId = req.user._id;
     const videoId = req.params.videoId;
 
-    if(!videoId){
+    if (!videoId) {
       throw new Error("video id not available");
     }
 
-    const data = await User.findById({ _id: userId }).select(" -password  -refreshToken");
+    const data = await User.findById({ _id: userId }).select(
+      " -password  -refreshToken"
+    );
 
     const videoIndex = await data.watchHistory.indexOf(videoId);
 
@@ -585,18 +589,19 @@ const deletesingleVideoFromWatchlist = asyncHandler(async (req, res) => {
   }
 });
 
-
-const deleteWatchList = asyncHandler(async(req,res)=>{
- try {
-   const userId = req.user._id;
-   const data = await User.findById({ _id: userId }).select(" -password  -refreshToken");
-   data.watchHistory =  undefined;
-  const newUserData = await data.save();
-   res.status(200).json(new ApiResponse(200,"success",newUserData))
- } catch (error) {
-  res.status(400).json(new ApiResponse(400,"",[error]))
- }
-})
+const deleteWatchList = asyncHandler(async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const data = await User.findById({ _id: userId }).select(
+      " -password  -refreshToken"
+    );
+    data.watchHistory = undefined;
+    const newUserData = await data.save();
+    res.status(200).json(new ApiResponse(200, "success", newUserData));
+  } catch (error) {
+    res.status(400).json(new ApiResponse(400, "", [error]));
+  }
+});
 
 export {
   registerUser,
@@ -612,5 +617,5 @@ export {
   getAllUplodedVideosDetails,
   getWatchList,
   deletesingleVideoFromWatchlist,
-  deleteWatchList
+  deleteWatchList,
 };
