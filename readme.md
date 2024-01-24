@@ -143,28 +143,34 @@ functionality :
                     title               :       REQUIRED
                     description         :       REQUIRED
 
-            B: /likes/:videoId                  (get)
+
+            B: /                                 (get)
+
+                fields:
+                    ################################       
+
+            C: /likes/:videoId                  (get)
 
                 fields:
                     ################################
 
-            C: /likes/:videoId                  (post)
+            D: /likes/:videoId                  (post)
 
                 fields:
                     ################################
 
-            D: /:videoId                        (get)
+            E: /:videoId                        (get)
 
                 fields:
                     ################################
 
-            E: /:videoId                        (delete)
+            F: /:videoId                        (delete)
 
                 fields:
                     ################################
 
 
-            F: /update-video-details/:videoId   (patch)
+            G: /update-video-details/:videoId   (patch)
 
                 fields:
 
@@ -173,7 +179,7 @@ functionality :
                     description                 (REQUIRED only field want to update)
 
 
-            G: /getcomments/:videoId            (get)
+            H: /getcomments/:videoId            (get)
 
                 fields:
                     ################################
