@@ -1,0 +1,20 @@
+.maincont {
+  padding: 10px 30px;
+}
+
+video {
+  max-width: 35% !important;
+  border-radius: 20px;
+}
+
+.videoTitle {
+  font-size: 20px;
+}
+
+.grey {
+  color: grey;
+  font-size: 14px;
+}
+.grey span {
+  padding: 8px 0;
+}/*# sourceMappingURL=maincont.css.map */

@@ -64,6 +64,52 @@ const addVideo = asyncHandler(async (req, res) => {
   }
 });
 
+
+const getallVideos = asyncHandler(async(req,res)=>{
+  try {
+    const data = await Video.aggregate([
+     
+      {
+        $lookup: {
+          from: "users",
+          localField: "owner",
+          foreignField: "_id",
+          as: "owner_details",
+        },
+      },
+      {
+        $addFields: {
+          owner_details: {
+            $first: "$owner_details",
+          },
+        },
+      },
+      {
+        $project: {
+          owner: 0,
+          createdAt: 0,
+          updatedAt: 0,
+          owner_details: {
+            password: 0,
+            createdAt: 0,
+            updatedAt: 0,
+            refreshToken: 0,
+          },
+        },
+      },
+    ]);
+ 
+
+    res
+      .status(200)
+      .json(new ApiResponse(200, "Data Successfully Synced", data));
+  } catch (error) {
+    res
+      .status(400)
+      .json(new ApiErrors(400, "error on getting data of videos", error));
+  }
+})
+
 const getVideoDetails = asyncHandler(async (req, res) => {
   if (!req.params.videoId) {
     res
@@ -366,4 +412,5 @@ export {
   getLikes,
   addLikes,
   getCommentLikes,
+  getallVideos
 };

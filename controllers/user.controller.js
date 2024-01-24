@@ -130,7 +130,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
   let cookieOption = {
     httpOnly: true,
-    secure: true,
+    secure: false,
   };
 
   const user = await User.findById(userId).select("-password -refreshToken ");
@@ -168,8 +168,6 @@ const updateUserDetails = asyncHandler(async (req, res) => {
     const userAlreadyExist = await User.findOne({
       $or: [{ email }, { userName }],
     });
-
-    
 
     user.email = req.body.email || user.email;
     user.fullName = req.body.fullName || user.fullName;
@@ -405,6 +403,24 @@ const getSubscriberAndChannel = asyncHandler(async (req, res) => {
           localField: "_id",
           foreignField: "subscriber",
           as: "Channal_Subscribed",
+          pipeline: [
+            {
+              $lookup: {
+                from: "users",
+                localField: "channel",
+                foreignField: "_id",
+                as: "subscribed_Channel_Details",
+              },
+            },
+
+            {
+              $addFields: {
+                subscribed_Channel_Details: {
+                  $first: "$subscribed_Channel_Details",
+                },
+              },
+            },
+          ],
         },
       },
       {
@@ -413,6 +429,23 @@ const getSubscriberAndChannel = asyncHandler(async (req, res) => {
           localField: "_id",
           foreignField: "channel",
           as: "our_Channel_Subscribers",
+          pipeline: [
+            {
+              $lookup: {
+                from: "users",
+                localField: "subscriber",
+                foreignField: "_id",
+                as: "our_Channel_subscribers_Details",
+              },
+            },
+            {
+              $addFields: {
+                our_Channel_subscribers_Details: {
+                  $first: "$our_Channel_subscribers_Details",
+                },
+              },
+            },
+          ],
         },
       },
       {
@@ -431,8 +464,36 @@ const getSubscriberAndChannel = asyncHandler(async (req, res) => {
           createdAt: 0,
           updatedAt: 0,
           refreshToken: 0,
-          Channal_Subscribed: 0,
-          our_Channel_Subscribers: 0,
+          Channal_Subscribed: {
+            subscriber: 0,
+            channel: 0,
+            _id: 0,
+            subscribed_Channel_Details: {
+              email: 0,
+              coverImage: 0,
+              watchHistory: 0,
+              password: 0,
+              createdA: 0,
+              updatedA: 0,
+              __v: 0,
+              refreshToken: 0,
+            },
+          },
+          our_Channel_Subscribers: {
+            subscriber: 0,
+            channel: 0,
+         
+            our_Channel_subscribers_Details: {
+              email: 0,
+              coverImage: 0,
+              watchHistory: 0,
+              password: 0,
+              createdA: 0,
+              updatedA: 0,
+              __v: 0,
+              refreshToken: 0,
+            },
+          },
         },
       },
     ]);

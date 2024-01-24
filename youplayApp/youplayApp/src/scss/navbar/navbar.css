@@ -1,0 +1,68 @@
+.navbar {
+  width: 100%;
+  padding: 5px;
+}
+.navbar .hamburgerDiv {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0px 10px;
+  padding: 10px;
+  border-radius: 100%;
+}
+.navbar .hamburgerDiv .hamburgerImage {
+  width: 25px;
+  height: 25px;
+}
+.navbar .hamburgerDiv:hover {
+  background-color: rgb(209, 208, 208);
+  cursor: pointer;
+}
+
+.youplayLogoDiv .youplayLogoImage {
+  width: 60px;
+}
+.youplayLogoDiv span {
+  font-size: 120%;
+  text-shadow: 2px 2px 3px grey;
+}
+
+.youplayLogoDiv:hover {
+  cursor: pointer;
+}
+.youplayLogoDiv:hover span {
+  text-shadow: 1px 1px 3px rgb(77, 75, 75);
+}
+
+.form {
+  width: 45% !important;
+}
+
+.addVideoDiv {
+  margin: 20px;
+}
+
+.addVideoImage {
+  width: 30px;
+  filter: invert(0.2);
+}
+
+.addVideoImage:hover {
+  cursor: pointer;
+  filter: invert(0);
+}
+
+.userProgileDiv {
+  padding: 5px;
+  border-radius: 50%;
+  border: 1px solid black;
+  filter: invert(0.2);
+}
+.userProgileDiv .userProfileLogoImage {
+  width: 25px;
+}
+
+.userProgileDiv:hover {
+  cursor: pointer;
+  filter: invert(0);
+}/*# sourceMappingURL=navbar.css.map */

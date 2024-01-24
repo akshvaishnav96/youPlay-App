@@ -1,0 +1,28 @@
+.sidebar {
+  width: 30%;
+  border-radius: 20px;
+}
+.sidebar .sidebarIconImage {
+  width: 20px;
+  margin: 0px 20px;
+}
+
+.sidebarItemDiv {
+  padding: 10px;
+  border-radius: 20px;
+}
+.sidebarItemDiv span {
+  font-size: 1rem;
+}
+
+.sidebarItemDiv:hover {
+  background-color: rgb(243, 243, 243);
+  cursor: pointer;
+}
+
+.sidebarChannelHeading {
+  font-size: 1.5rem;
+  padding: 10px;
+  text-align: center;
+  font-weight: 600;
+}/*# sourceMappingURL=sidebar.css.map */
