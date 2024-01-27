@@ -3,22 +3,19 @@ import React, { useEffect, useState } from "react";
 import "../scss/maincont/maincont.scss";
 
 const Maincont = ({ video }) => {
-  const [hoveredIndex, setHoveredIndex] = useState(null);
-  const [videoWidth, setVideoWidth] = useState(null);
+
   useEffect(() => {
-    const videoElem = document.getElementsByClassName("mainVideoDiv");
-    const video = document.getElementsByClassName("video");
-    Array.from(videoElem).forEach((element, index) => {
+    const videoElements = document.getElementsByClassName("mainVideoDiv");
+    const videoTags = document.getElementsByClassName("video");
+
+    Array.from(videoElements).forEach((element, index) => {
       element.addEventListener("mouseenter", () => {
-        setHoveredIndex(index);
-        video[index].play();
+        videoTags[index].play();
       });
 
       element.addEventListener("mouseleave", () => {
-        setHoveredIndex(null);
-
-        video[index].pause();
-        video[index].currentTime = 0;
+        videoTags[index].currentTime = 0;
+        videoTags[index].pause();
       });
     });
   }, [video]);
@@ -29,19 +26,10 @@ const Maincont = ({ video }) => {
         {video.map((video, index) => (
           <div className="mainVideoDiv flex" key={video._id}>
             <div className="videoDiv">
-              <img
-                src={video.thumbnail}
-                alt="Video Thumbnail "
-                width={"50%"}
-                className={`videoThumbnail  ${
-                  index === hoveredIndex ? "hidden" : ""
-                }`}
-              />
+              
               <video
                 muted
-                className={`video change ${
-                  index !== hoveredIndex ? "hidden" : ""
-                }`}
+                className={`video change `}
               >
                 <source src={video.videoFile} />
               </video>

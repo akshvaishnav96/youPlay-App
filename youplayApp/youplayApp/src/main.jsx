@@ -18,30 +18,7 @@ import LoginForm from "./components/loginForm.jsx";
 import NotFoundPage from "./components/notFoundPage.jsx";
 
 function Main() {
-  const [userData, setUserData] = useState([]);
-  const [userLoggedIn, setUserLoggedIn] = useState(false);
-
-  const fetchUserLoggedInData = async (userName, password) => {
-    try {
-      const res = await axios.post(
-        "http://localhost:3000/api/v1/users/login",
-        {
-          userLoginDetails: userName,
-          password: password,
-        },
-        { withCredentials: true }
-      );
-
-      setUserData(res.data);
-      setUserLoggedIn(true);
-
-      return res;
-    } catch (error) {
-      setUserData([]);
-      setUserLoggedIn(false);
-    }
-  };
-
+  
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<HeaderFooter />}>
@@ -49,7 +26,7 @@ function Main() {
         <Route path="/user/signup" element={<SignUpForm />} />
         <Route
           path="/user/login"
-          element={<LoginForm fetchUserFunction={fetchUserLoggedInData} />}
+          element={<LoginForm  />}
         />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
