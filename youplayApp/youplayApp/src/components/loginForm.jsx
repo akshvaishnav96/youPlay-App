@@ -1,7 +1,7 @@
 import React,{useState} from "react";
+import axios from "axios"
 
-
-function LoginForm({ fetchUserFunction, user }) {
+function LoginForm() {
   
   const [userData, setUserData] = useState([]);
   const [userLoggedIn, setUserLoggedIn] = useState(false);
@@ -17,21 +17,19 @@ function LoginForm({ fetchUserFunction, user }) {
         { withCredentials: true }
       );
 
-      setUserData(res.data);
-      setUserLoggedIn(true);
+   
 
       return res;
     } catch (error) {
-      setUserData([]);
-      setUserLoggedIn(false);
+      console.log(error);
     }
   };
 
   const loginFormSubmit = async (e) => {
     e.preventDefault();
     const { userName, password } = e.target.elements;
-    await fetchUserLoggedInData(userName.value, password.value);
-    setUserData(res.data);
+  const res =  await fetchUserLoggedInData(userName.value, password.value);
+    setUserData(res);
     setUserLoggedIn(true)
   };
   return (

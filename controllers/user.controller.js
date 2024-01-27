@@ -131,6 +131,8 @@ const loginUser = asyncHandler(async (req, res) => {
   let cookieOption = {
     httpOnly: true,
     secure: false,
+    expires:new Date(Date.now()+ Number(process.env.COOKIE_EXPIRY_FROM_BROWSER))
+   
   };
 
   const user = await User.findById(userId).select("-password -refreshToken ");
