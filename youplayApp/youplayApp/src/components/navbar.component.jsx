@@ -1,16 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 
 import "../scss/navbar/navbar.css";
 import Youplaylogo from "./youplaylogo.component";
 import { Link } from "react-router-dom";
+import VideoUploadForm from "./videoUploadForm";
 
+const Navbar = ({ userLoginDetails, userLoggedIn }) => {
+  const [addVideoForm, setAddVideoForm] = useState(false);
 
-const Navbar = ({userLoginDetails,userLoggedIn}) => {
+  const formClose = (e) => {
+ e.preventDefault();
+    setAddVideoForm((prev)=>{
+      setAddVideoForm(!prev)
+    });
+  };
+
   return (
     <>
-
-
-
+      {addVideoForm ? <VideoUploadForm /> : ""}
       <div className="navbar w-full flex items-center justify-around">
         <div className=" flex items-center justify-around">
           <div className="w-10 hamburgerDiv">
@@ -52,7 +59,7 @@ const Navbar = ({userLoginDetails,userLoggedIn}) => {
               type="search"
               id="default-search"
               className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Search... by 📹videos  🦸channel"  
+              placeholder="Search... by 📹videos  🦸channel"
               required
             />
             <button
@@ -66,25 +73,49 @@ const Navbar = ({userLoginDetails,userLoggedIn}) => {
 
         <div className="flex items-center justify-around">
           <div className="addVideoDiv flex items-center justify-center">
-            <img
+            {/* <img
               src="../images/add-video-icon.webp"
               alt=""
-              className="addVideoImage"
-            />
+              className={`addVideoImage`}
+            /> */}
+
+            {addVideoForm ? (
+              <button
+                className="z-20 videoFormCloseButton"
+                type="button"
+                onClick={formClose}
+              >
+                ✖️
+              </button>
+            ) : (
+            <button > <img
+                src="../images/add-video-icon.webp"
+                alt=""
+                className={`addVideoImage`} 
+                onClick={formClose}
+              /></button>
+            )}
           </div>
 
           <div className="userProgileDiv flex items-center justify-center">
-            <img
-              src={userLoggedIn ? userLoginDetails.data.avatar : "../images/user1.svg"}
-              alt=""
-              className="userProfileLogoImage"
-            />
-
-
-           
+            <Link to="/user/login">
+              <img
+                src={
+                  userLoggedIn
+                    ? userLoginDetails.data.avatar
+                    : "../images/user1.svg"
+                }
+                alt=""
+                className="userProfileLogoImage"
+              />
+            </Link>
           </div>
-    <button type="button" className= "mx-3 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"><Link to="/user/signup">Sign Up</Link></button>
-
+          <button
+            type="button"
+            className="mx-3 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          >
+            <Link to="/user/signup">Sign Up</Link>
+          </button>
         </div>
       </div>
     </>

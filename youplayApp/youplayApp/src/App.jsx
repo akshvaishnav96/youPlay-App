@@ -6,14 +6,21 @@ import Maincont from "./components/maincont.component";
 import "./scss/app/app.scss";
 import axios from "axios";
 
+
+
 function App() {
   const [videoData, setVideoData] = useState([]);
-
   const [userId, setUserId] = useState();
   const [SubscribedChannelData, setSubscribedChannelData] = useState([]);
   const [channelSubscribedByUser, setchannelSubscribedByUser] = useState([]);
 
+
+
+
   useEffect(() => {
+
+ 
+
     const fetchVideoData = async () => {
       try {
         const res = await axios.get("http://localhost:3000/api/v1/videos", {
@@ -38,12 +45,15 @@ function App() {
       }
     };
 
+    
     fetchUserSubscriptions();
     fetchVideoData();
   }, []);
 
+
+ 
+
   return (
-    <>
       <div className="Maindiv flex">
         <Sidebar
           subscribersData={SubscribedChannelData}
@@ -52,7 +62,6 @@ function App() {
         />
         <Maincont video={videoData} />
       </div>
-    </>
   );
 }
 

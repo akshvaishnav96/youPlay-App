@@ -1,11 +1,10 @@
-import React,{useState} from "react";
-import axios from "axios"
+import React, { useState } from "react";
+import axios from "axios";
+import {useNavigate} from "react-router-dom"
 
 function LoginForm() {
-  
-  const [userData, setUserData] = useState([]);
-  const [userLoggedIn, setUserLoggedIn] = useState(false);
 
+ const navigate = useNavigate();
   const fetchUserLoggedInData = async (userName, password) => {
     try {
       const res = await axios.post(
@@ -17,23 +16,32 @@ function LoginForm() {
         { withCredentials: true }
       );
 
-   
-
       return res;
+
     } catch (error) {
+
       console.log(error);
     }
   };
 
+
+
   const loginFormSubmit = async (e) => {
     e.preventDefault();
-    const { userName, password } = e.target.elements;
-  const res =  await fetchUserLoggedInData(userName.value, password.value);
-    setUserData(res);
-    setUserLoggedIn(true)
+  try {
+      const { userName, password } = e.target.elements;
+      const res = await fetchUserLoggedInData(userName.value, password.value);
+      navigate("/")
+  } catch (error) {
+    navigate("/user/login");
+  }
   };
+
+  
+ 
+
+
   return (
-    <>
       <div className="loginForm" style={{ width: "50%", margin: "4rem auto" }}>
         <form onSubmit={loginFormSubmit} method="post">
           <div className="grid gap-6 mb-6 md:grid-cols-1">
@@ -79,7 +87,6 @@ function LoginForm() {
           </div>
         </form>
       </div>
-    </>
   );
 }
 

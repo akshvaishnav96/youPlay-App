@@ -1,0 +1,28 @@
+.videoUplodeFormMainDiv {
+  background-color: pink;
+  padding: 20px;
+  position: fixed;
+  z-index: 10;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  form {
+    width: 60%;
+  }
+
+}
+
+
+.videoFormCloseButton{
+    position: fixed;
+}
+
+
+

@@ -71,8 +71,7 @@ userSchema.methods.generateAccessToken = function () {
       fullName: this.fullName,
     },
     process.env.ACCESS_TOKEN_KEY,
-    // {expiresIn: process.env.ACCESS_TOKEN_EXPIRY  
-   {expiresIn: process.env.ACCESS_TOKEN_EXPIRY
+   {expiresIn: Number(process.env.ACCESS_TOKEN_EXPIRY)
     }
 
 
@@ -85,7 +84,7 @@ userSchema.methods.generateRefreshToken = function () {
       id: this._id,
     },
     process.env.REFRESH_TOKEN_KEY,
-    { expiresIn: process.env.REFRESH_TOKEN_EXPIRY }
+    { expiresIn: Number(process.env.REFRESH_TOKEN_EXPIRY) }
   );
 };
 

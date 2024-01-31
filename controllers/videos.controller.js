@@ -8,6 +8,7 @@ import { Likes } from "../models/likes.models.js";
 import { User } from "../models/users.models.js";
 
 const addVideo = asyncHandler(async (req, res) => {
+
   try {
     const requiredFields = ["title", "description"];
     const requiredFileFields = ["video", "thumbnail"];
@@ -18,9 +19,11 @@ const addVideo = asyncHandler(async (req, res) => {
           `error: Fields ${item} is required.`,
         ]);
       }
-      return;
     });
+
+    
     requiredFileFields.filter((item) => {
+    
       if (!req.files[item]) {
         throw new ApiErrors(400, ` ${item} is required.`, [
           `error: Fields ${item} is required.`,
@@ -28,9 +31,10 @@ const addVideo = asyncHandler(async (req, res) => {
       }
       return;
     });
-
+    
     const { video, thumbnail } = req.files;
     const { title, description } = req.body;
+  
 
     const videoLocalPath = video?.[0]?.path;
     const thumbnailLocalPath = thumbnail?.[0]?.path;

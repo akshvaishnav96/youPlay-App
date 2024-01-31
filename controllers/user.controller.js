@@ -83,12 +83,12 @@ const loginUser = asyncHandler(async (req, res) => {
 
     if (authorizedUser) {
       res
-        .status(200)
+        .status(400)
         .json(
-          new ApiResponse(
-            200,
+          new ApiErrors(
+            400,"",
             "already logged in Logout First to login again",
-            authorizedUser
+            
           )
         );
       return;
