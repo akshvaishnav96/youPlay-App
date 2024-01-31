@@ -34,7 +34,7 @@ const registerUser = asyncHandler(async (req, res) => {
   requiredFields.filter((item) => {
     if (!req.body[item]) {
       throw new ApiErrors(400, `Fields ${item} are required.`, [
-        `error: Fields ${item} are required.`,
+        `Field ${item} are required.`,
       ]);
     }
   });

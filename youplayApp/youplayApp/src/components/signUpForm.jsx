@@ -1,6 +1,64 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 
 function SignUpForm() {
+  const [userError, setUserError] = useState([]);
+  const errors = [];
+  const navigate = useNavigate();
+  useEffect(() => {
+    console.log(userError);
+  }, [userError]);
+  const signUpFormSubmit = async (e) => {
+    e.preventDefault();
+    // const requiredFields = [
+    //   "userName",
+    //   "email",
+    //   "fullName",
+    //   "password",
+    //   "avatar",
+    // ];
+
+    // requiredFields.map((item) => {
+    //   if (e.target[item].value === "") {
+    //     errors.push(`field ${item} is required`);
+    //   }
+    //   return;
+    // });
+
+    // setUserError(errors);
+
+
+
+    const { userName, email, fullName, avatar, password, coverImage } =
+      e.target;
+
+    const res = await axios.post(
+      "http://localhost:3000/api/v1/users/register",
+      {
+        userName: userName.value,
+        email: email.value,
+        fullName: fullName.value,
+        avatar: avatar.files[0],
+        password: password.value,
+        coverImage: coverImage.files[0],
+      },
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    if (res.data.errors) {
+      setUserError(res.data.errors)
+    } else {
+      console.log("user successfully Added", res);
+      navigate("/user/login")
+    }
+  };
+
   return (
     <>
       <div
@@ -10,7 +68,13 @@ function SignUpForm() {
           margin: "4rem auto",
         }}
       >
-        <form>
+
+        <h2 className="text-red-600 text-center my-8">{userError}</h2>
+        <form
+          method="post"
+          onSubmit={signUpFormSubmit}
+         
+        >
           <div className="grid gap-6 mb-6 md:grid-cols-2">
             <div>
               <label
@@ -69,7 +133,7 @@ function SignUpForm() {
               </label>
               <input
                 type="file"
-                id="phone"
+                id="avatar"
                 name="avatar"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="📸 Profile Image"
@@ -91,7 +155,6 @@ function SignUpForm() {
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="🖼️ Cover Image"
                 accept="image/*"
-                required
               />
             </div>
             <div>
@@ -109,6 +172,9 @@ function SignUpForm() {
                 autoComplete="false"
                 required
               />
+
+              {/* <input class="shadow appearance-none border border-red-500 rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="******************" />
+<p class="text-red-500 text-xs italic">Please choose a password.</p> */}
             </div>
           </div>
 
