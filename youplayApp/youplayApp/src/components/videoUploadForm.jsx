@@ -4,7 +4,6 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 import "../scss/videoUploadForm/videoUploadForm.scss";
-import Popup from "./popup";
 
 function VideoUploadForm() {
   const [errors, setErrors] = useState([]);
